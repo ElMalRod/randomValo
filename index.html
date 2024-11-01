@@ -12,28 +12,41 @@
 
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             background: #1c1c1c;
             color: #fff;
-            flex-direction: column;
+        }
+
+        .roles-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .rol {
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            transition: transform 0.2s;
+            border: 2px solid transparent; /* Borde por defecto */
+            border-radius: 10px; /* Bordes redondeados */
+        }
+
+        .rol:hover {
+            transform: scale(1.1);
+        }
+
+        .rol.seleccionado {
+            border-color: #ff4655; /* Color del borde cuando está seleccionado */
+            background-color: rgba(255, 70, 85, 0.3); /* Fondo semitransparente al seleccionar */
         }
 
         .ruleta-container {
             text-align: center;
-        }
-
-        .nombre-personaje {
-            font-size: 2rem;
-            color: #ff4655;
-            margin-bottom: 20px;
-            font-weight: bold;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .boton {
@@ -51,6 +64,11 @@
             background-color: #ff6b77;
         }
 
+        .boton.desactivado {
+            background-color: #555; /* Color del botón desactivado */
+            cursor: not-allowed; /* Cambiar cursor para mostrar que está deshabilitado */
+        }
+
         .resultado {
             font-size: 1.5rem;
             margin-top: 20px;
@@ -62,77 +80,150 @@
             max-width: 200px;
             border-radius: 10px;
             display: none;
-            animation: bobbing 1s infinite; /* Efecto de rebote */
+            animation: bobbing 1s infinite;
         }
 
-        /* Animación de rebote */
         @keyframes bobbing {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
 
+        .contenedor-nombres {
+            position: relative;
+            width: 300px; /* Ancho del cuadrado */
+            height: 300px; /* Alto del cuadrado */
+            border: 2px solid #ff4655; /* Borde del cuadrado */
+            overflow: hidden; /* Oculta el contenido que sobresale */
+            margin-top: 20px; /* Espacio superior */
+            display: flex; /* Usar flexbox para centrar contenido */
+            justify-content: center; /* Centrar horizontalmente */
+            align-items: center; /* Centrar verticalmente */
+        }
+
+        .nombre-personaje {
+            position: absolute; /* Posicionamiento absoluto para moverlo libremente */
+            font-size: 2rem;
+            color: #ff4655;
+            font-weight: bold;
+            white-space: nowrap; /* Evitar que el texto se divida en varias líneas */
+            animation: rebote 2s infinite; /* Animación de rebote */
+        }
+
+        @keyframes rebote {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(60px, 0); } /* Ajustar el rebote horizontal */
+            50% { transform: translate(0, 60px); } /* Ajustar el rebote vertical */
+            75% { transform: translate(-60px, 0); } /* Ajustar el rebote horizontal */
+            100% { transform: translate(0, 0); }
+        }
+
         .highlight {
-            animation: bobbing 1s infinite; /* Aplicar el efecto de rebote al nombre */
+            animation: bobbing 1s infinite;
         }
     </style>
 </head>
 <body>
+    <div class="roles-container">
+        <img src="imgs/controlador.webp" alt="Controlador" class="rol" onclick="seleccionarRol('Controlador')">
+        <img src="imgs/duelista.webp" alt="Duelista" class="rol" onclick="seleccionarRol('Duelista')">
+        <img src="imgs/iniciador.webp" alt="Iniciador" class="rol" onclick="seleccionarRol('Iniciador')">
+        <img src="imgs/centinela.webp" alt="Centinela" class="rol" onclick="seleccionarRol('Centinela')">
+        <img src="imgs/todos.webp" alt="Todos los Agentes" class="rol" onclick="seleccionarRol('Todos')"> <!-- Opción para Todos los Agentes -->
+    </div>
+
     <div class="ruleta-container">
-        <div id="nombre-personaje" class="nombre-personaje">Presiona "Girar Ruleta"</div>
-        <button class="boton" onclick="girarRuleta()">Girar Ruleta</button>
+        <div class="contenedor-nombres">
+            <div id="nombre-personaje" class="nombre-personaje"></div>
+        </div>
+        <button id="girar-btn" class="boton" onclick="girarRuleta()">Girar Ruleta</button>
         <div id="resultado" class="resultado"></div>
         <img id="imagen-personaje" class="imagen-personaje" src="" alt="Imagen del personaje">
     </div>
 
     <script>
-        const personajes = ["astra", "breach", "brimstom", "chamber", "cypher", "fade", "harbor", "jett", "kill-joy", "kyo", "neon", "omen", "phoenix", "raze", "reyna", "sage", "sova", "viper", "yoru"];
+        const roles = {
+            "Controlador": ["Astra", "Brimstone", "Harbor", "Omen", "Viper", "Clove"],
+            "Duelista": ["Jett", "Neon", "Phoenix", "Raze", "Reyna", "Yoru", "Iso"],
+            "Iniciador": ["Breach", "Fade", "Gekko", "KAY/O", "Skye", "Sova"],
+            "Centinela": ["Chamber", "Cypher", "Deadlock", "Killjoy", "Sage", "Vyse"],
+            "Todos": [] // Agregamos un nuevo rol que combinará todos los agentes
+        };
+
+        // Combinamos todos los personajes de los roles en la opción "Todos"
+        roles["Todos"] = [].concat(...Object.values(roles).slice(0, 4));
+
+        let personajes = [];
         const nombrePersonajeDiv = document.getElementById("nombre-personaje");
         const resultadoDiv = document.getElementById("resultado");
         const imagenPersonaje = document.getElementById("imagen-personaje");
-
+        const girarBtn = document.getElementById("girar-btn");
         let intervalo;
 
+        function seleccionarRol(rol) {
+            personajes = roles[rol];
+            nombrePersonajeDiv.innerText = ""; // Limpiar el nombre al seleccionar rol
+            resultadoDiv.innerText = ""; // Limpiar el resultado al cambiar de rol
+            imagenPersonaje.style.display = "none"; // Ocultar la imagen
+            clearInterval(intervalo); // Detener la ruleta si está en movimiento
+
+            // Limpiar selección de roles
+            const rolesSeleccionados = document.querySelectorAll('.rol');
+            rolesSeleccionados.forEach(rolElement => {
+                rolElement.classList.remove('seleccionado'); // Remover clase de selección
+            });
+
+            // Marcar el rol seleccionado
+            const rolElement = Array.from(rolesSeleccionados).find(element => element.alt === rol);
+            if (rolElement) {
+                rolElement.classList.add('seleccionado'); // Agregar clase de selección al rol
+            }
+
+            girarBtn.disabled = false; // Habilitar el botón girar ruleta
+        }
+
         function girarRuleta() {
-            // Limpiar resultado, remover efectos previos y ocultar imagen
+            if (personajes.length === 0) {
+                alert("Selecciona un rol primero");
+                return;
+            }
+
             resultadoDiv.innerText = "";
             imagenPersonaje.style.display = "none";
-            nombrePersonajeDiv.classList.remove("highlight");
             clearInterval(intervalo);
 
-            let index = 0;
-            let velocidad = 50; // velocidad inicial de cambio de nombres (ajustada para mayor rapidez)
+            // Desactivar el botón después de girar una vez
+            girarBtn.disabled = true;
 
-            // Actualizar el nombre rápidamente
+            let index = 0;
+            let velocidad = 50;
+
             intervalo = setInterval(() => {
-                nombrePersonajeDiv.innerText = personajes[index].charAt(0).toUpperCase() + personajes[index].slice(1);
+                const nombreAgente = personajes[index];
+                nombrePersonajeDiv.innerText = nombreAgente;
                 index = (index + 1) % personajes.length;
             }, velocidad);
 
-            // Simular desaceleración y detenerse en un personaje aleatorio
-            let pasos = Math.floor(Math.random() * 10) + 15; // número de "pasos" reducido para un giro más corto
+            let pasos = Math.floor(Math.random() * 10) + 15;
 
             (function desacelerar() {
                 if (pasos > 0) {
-                    velocidad += 20; // desacelera rápidamente aumentando la velocidad de cambio
+                    velocidad += 20;
                     clearInterval(intervalo);
                     intervalo = setInterval(() => {
-                        nombrePersonajeDiv.innerText = personajes[index].charAt(0).toUpperCase() + personajes[index].slice(1);
+                        const nombreAgente = personajes[index];
+                        nombrePersonajeDiv.innerText = nombreAgente;
                         index = (index + 1) % personajes.length;
                     }, velocidad);
 
                     pasos--;
-                    setTimeout(desacelerar, velocidad); // llamada recursiva para la desaceleración
+                    setTimeout(desacelerar, velocidad);
                 } else {
                     clearInterval(intervalo);
                     const personajeSeleccionado = personajes[(index - 1 + personajes.length) % personajes.length];
-                    resultadoDiv.innerText = `Personaje seleccionado: ${personajeSeleccionado.charAt(0).toUpperCase() + personajeSeleccionado.slice(1)}`;
+                    resultadoDiv.innerText = `Personaje seleccionado: ${personajeSeleccionado}`;
 
-                    // Mostrar la imagen correspondiente del personaje
-                    imagenPersonaje.src = `imgs/${personajeSeleccionado}.png`;
-                    imagenPersonaje.style.display = "block";
-
-                    // Agregar efecto de rebote a la imagen y al nombre del personaje
-                    nombrePersonajeDiv.classList.add("highlight");
+                    imagenPersonaje.src = `imgs/${personajeSeleccionado.toLowerCase()}.webp`; // Cambia la ruta según el nombre del personaje
+                    imagenPersonaje.style.display = "block"; // Mostrar imagen del personaje
                 }
             })();
         }
