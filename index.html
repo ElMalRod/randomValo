@@ -144,7 +144,7 @@
         const roles = {
             "Controlador": ["Astra", "Brimstone", "Harbor", "Omen", "Viper", "Clove"],
             "Duelista": ["Jett", "Neon", "Phoenix", "Raze", "Reyna", "Yoru", "Iso"],
-            "Iniciador": ["Breach", "Fade", "Gekko", "KAY/O", "Skye", "Sova"],
+            "Iniciador": ["Breach", "Fade", "Gekko", "KAY-O", "Skye", "Sova"],
             "Centinela": ["Chamber", "Cypher", "Deadlock", "Killjoy", "Sage", "Vyse"],
             "Todos": [] 
         };
@@ -222,7 +222,7 @@
                     const personajeSeleccionado = personajes[(index - 1 + personajes.length) % personajes.length];
                     resultadoDiv.innerText = `Personaje seleccionado: ${personajeSeleccionado}`;
 
-                    imagenPersonaje.src = `imgs/${personajeSeleccionado.toLowerCase()}.png`; 
+                    imagenPersonaje.src = `imgs/${personajeSeleccionado.toLowerCase()}.webp`; 
                     imagenPersonaje.style.display = "block"; // Mostrar imagen del personaje
                 }
             })();
