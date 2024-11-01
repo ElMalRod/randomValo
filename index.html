@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruleta de Personajes de Valorant</title>
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ruleta de Personajes de Valorant</title>
+        <style>
         * {
             box-sizing: border-box;
             font-family: Arial, sans-serif;
@@ -75,19 +75,6 @@
             color: #ff4655;
         }
 
-        .imagen-personaje {
-            margin-top: 20px;
-            max-width: 200px;
-            border-radius: 10px;
-            display: none;
-            animation: bobbing 1s infinite;
-        }
-
-        @keyframes bobbing {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
         .contenedor-nombres {
             position: relative;
             width: 300px; /* Ancho del cuadrado */
@@ -98,6 +85,7 @@
             display: flex; /* Usar flexbox para centrar contenido */
             justify-content: center; /* Centrar horizontalmente */
             align-items: center; /* Centrar verticalmente */
+            flex-direction: column; /* Para apilar el nombre y la imagen */
         }
 
         .nombre-personaje {
@@ -117,30 +105,70 @@
             100% { transform: translate(0, 0); }
         }
 
+        .imagen-personaje {
+            max-width: 80%; 
+            max-height: 80%; 
+            border-radius: 10px;
+            display: none;
+            animation: bobbing 1s infinite;
+        }
+
+        @keyframes bobbing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
         .highlight {
             animation: bobbing 1s infinite;
         }
+        .nombre-rol {
+            margin-top: 4px;
+            font-size: 0.7rem; 
+            text-align: center;
+        }
     </style>
-</head>
-<body>
-    <div class="roles-container">
-        <img src="imgs/controlador.webp" alt="Controlador" class="rol" onclick="seleccionarRol('Controlador')">
-        <img src="imgs/duelista.webp" alt="Duelista" class="rol" onclick="seleccionarRol('Duelista')">
-        <img src="imgs/iniciador.webp" alt="Iniciador" class="rol" onclick="seleccionarRol('Iniciador')">
-        <img src="imgs/centinela.webp" alt="Centinela" class="rol" onclick="seleccionarRol('Centinela')">
-        <img src="imgs/todos.webp" alt="Todos los Agentes" class="rol" onclick="seleccionarRol('Todos')"> <!-- Opción para Todos los Agentes -->
-    </div>
-
-    <div class="ruleta-container">
-        <div class="contenedor-nombres">
-            <div id="nombre-personaje" class="nombre-personaje"></div>
+    </head>
+    <body>
+        <div class="roles-container">
+            <div class="rol" onclick="seleccionarRol('Controlador')">
+                <img src="imgs/controlador.webp" alt="Controlador" width="50"
+                    height="50">
+                <div class="nombre-rol">Controlador</div>
+            </div>
+            <div class="rol" onclick="seleccionarRol('Duelista')">
+                <img src="imgs/duelista.webp" alt="Duelista" width="50"
+                    height="50">
+                <div class="nombre-rol">Duelista</div>
+            </div>
+            <div class="rol" onclick="seleccionarRol('Iniciador')">
+                <img src="imgs/iniciador.webp" alt="Iniciador" width="50"
+                    height="50">
+                <div class="nombre-rol">Iniciador</div>
+            </div>
+            <div class="rol" onclick="seleccionarRol('Centinela')">
+                <img src="imgs/centinela.webp" alt="Centinela" width="50"
+                    height="50">
+                <div class="nombre-rol">Centinela</div>
+            </div>
+            <div class="rol" onclick="seleccionarRol('Todos')">
+                <img src="imgs/todos.webp" alt="Todos los Agentes" width="50"
+                    height="50">
+                <div class="nombre-rol">Todos</div>
+            </div>
         </div>
-        <button id="girar-btn" class="boton" onclick="girarRuleta()">Girar Ruleta</button>
-        <div id="resultado" class="resultado"></div>
-        <img id="imagen-personaje" class="imagen-personaje" src="" alt="Imagen del personaje">
-    </div>
 
-    <script>
+        <div class="ruleta-container">
+            <div class="contenedor-nombres">
+                <div id="nombre-personaje" class="nombre-personaje"></div>
+                <img id="imagen-personaje" class="imagen-personaje" src
+                    alt="Imagen del personaje">
+            </div>
+            <button id="girar-btn" class="boton" onclick="girarRuleta()">Girar
+                Ruleta</button>
+            <div id="resultado" class="resultado"></div>
+        </div>
+
+        <script>
         const roles = {
             "Controlador": ["Astra", "Brimstone", "Harbor", "Omen", "Viper", "Clove"],
             "Duelista": ["Jett", "Neon", "Phoenix", "Raze", "Reyna", "Yoru", "Iso"],
@@ -149,7 +177,6 @@
             "Todos": [] 
         };
 
-     
         roles["Todos"] = [].concat(...Object.values(roles).slice(0, 4));
 
         let personajes = [];
@@ -169,16 +196,31 @@
             // Limpiar selección de roles
             const rolesSeleccionados = document.querySelectorAll('.rol');
             rolesSeleccionados.forEach(rolElement => {
-                rolElement.classList.remove('seleccionado'); // Remover clase de selección
+                rolElement.classList.remove('seleccionado');
             });
 
             // Marcar el rol seleccionado
-            const rolElement = Array.from(rolesSeleccionados).find(element => element.alt === rol);
+            const rolElement = Array.from(rolesSeleccionados).find(element => element.querySelector('.nombre-rol').innerText === rol);
             if (rolElement) {
-                rolElement.classList.add('seleccionado'); // Agregar clase de selección al rol
+                rolElement.classList.add('seleccionado'); 
             }
 
-            girarBtn.disabled = false; // Habilitar el botón girar ruleta
+            girarBtn.disabled = false; 
+        }
+        function mostrarResultado(personaje) {
+            const imagenSrc = `imgs/${personaje}.webp`;
+                nombrePersonajeDiv.innerText = personaje;
+                imagenPersonaje.src = imagenSrc;
+                imagenPersonaje.style.display = "block"; 
+                resultadoDiv.innerText = `¡Te ha tocado a ${personaje}!`;
+                girarBtn.disabled = false; 
+        }
+
+        function mezclarArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; 
+            }
         }
 
         function girarRuleta() {
@@ -190,12 +232,13 @@
             resultadoDiv.innerText = "";
             imagenPersonaje.style.display = "none";
             clearInterval(intervalo);
+            
+            girarBtn.disabled = true; 
 
-            // Desactivar el botón después de girar una vez
-            girarBtn.disabled = true;
-
+            mezclarArray(personajes);
+            
             let index = 0;
-            let velocidad = 50;
+            let velocidad = 30;
 
             intervalo = setInterval(() => {
                 const nombreAgente = personajes[index];
@@ -207,26 +250,18 @@
 
             (function desacelerar() {
                 if (pasos > 0) {
-                    velocidad += 7;
-                    clearInterval(intervalo);
-                    intervalo = setInterval(() => {
-                        const nombreAgente = personajes[index];
-                        nombrePersonajeDiv.innerText = nombreAgente;
-                        index = (index + 1) % personajes.length;
-                    }, velocidad);
-
-                    pasos--;
-                    setTimeout(desacelerar, velocidad);
+                    setTimeout(() => {
+                        velocidad += 20;
+                        pasos--;
+                    }, 200);
+                    requestAnimationFrame(desacelerar);
                 } else {
                     clearInterval(intervalo);
-                    const personajeSeleccionado = personajes[(index - 1 + personajes.length) % personajes.length];
-                    resultadoDiv.innerText = `Personaje seleccionado: ${personajeSeleccionado}`;
-
-                    imagenPersonaje.src = `imgs/${personajeSeleccionado.toLowerCase()}.webp`; 
-                    imagenPersonaje.style.display = "block"; // Mostrar imagen del personaje
+                    mostrarResultado(personajes[0]); 
                 }
             })();
         }
+
     </script>
-</body>
+    </body>
 </html>
