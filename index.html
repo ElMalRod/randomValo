@@ -146,10 +146,10 @@
             "Duelista": ["Jett", "Neon", "Phoenix", "Raze", "Reyna", "Yoru", "Iso"],
             "Iniciador": ["Breach", "Fade", "Gekko", "KAY/O", "Skye", "Sova"],
             "Centinela": ["Chamber", "Cypher", "Deadlock", "Killjoy", "Sage", "Vyse"],
-            "Todos": [] // Agregamos un nuevo rol que combinará todos los agentes
+            "Todos": [] 
         };
 
-        // Combinamos todos los personajes de los roles en la opción "Todos"
+     
         roles["Todos"] = [].concat(...Object.values(roles).slice(0, 4));
 
         let personajes = [];
@@ -161,10 +161,10 @@
 
         function seleccionarRol(rol) {
             personajes = roles[rol];
-            nombrePersonajeDiv.innerText = ""; // Limpiar el nombre al seleccionar rol
-            resultadoDiv.innerText = ""; // Limpiar el resultado al cambiar de rol
+            nombrePersonajeDiv.innerText = ""; 
+            resultadoDiv.innerText = ""; 
             imagenPersonaje.style.display = "none"; // Ocultar la imagen
-            clearInterval(intervalo); // Detener la ruleta si está en movimiento
+            clearInterval(intervalo); 
 
             // Limpiar selección de roles
             const rolesSeleccionados = document.querySelectorAll('.rol');
