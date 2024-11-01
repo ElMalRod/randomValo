@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruleta de Personajes de Valorant</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #1c1c1c;
+            color: #fff;
+            flex-direction: column;
+        }
+
+        .ruleta-container {
+            text-align: center;
+        }
+
+        .nombre-personaje {
+            font-size: 2rem;
+            color: #ff4655;
+            margin-bottom: 20px;
+            font-weight: bold;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .boton {
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #ff4655;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .boton:hover {
+            background-color: #ff6b77;
+        }
+
+        .resultado {
+            font-size: 1.5rem;
+            margin-top: 20px;
+            color: #ff4655;
+        }
+
+        .imagen-personaje {
+            margin-top: 20px;
+            max-width: 200px;
+            border-radius: 10px;
+            display: none;
+            animation: bobbing 1s infinite; /* Efecto de rebote */
+        }
+
+        /* Animación de rebote */
+        @keyframes bobbing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .highlight {
+            animation: bobbing 1s infinite; /* Aplicar el efecto de rebote al nombre */
+        }
+    </style>
+</head>
+<body>
+    <div class="ruleta-container">
+        <div id="nombre-personaje" class="nombre-personaje">Presiona "Girar Ruleta"</div>
+        <button class="boton" onclick="girarRuleta()">Girar Ruleta</button>
+        <div id="resultado" class="resultado"></div>
+        <img id="imagen-personaje" class="imagen-personaje" src="" alt="Imagen del personaje">
+    </div>
+
+    <script>
+        const personajes = ["astra", "breach", "brimstom", "chamber", "cypher", "fade", "harbor", "jett", "kill-joy", "kyo", "neon", "omen", "phoenix", "raze", "reyna", "sage", "sova", "viper", "yoru"];
+        const nombrePersonajeDiv = document.getElementById("nombre-personaje");
+        const resultadoDiv = document.getElementById("resultado");
+        const imagenPersonaje = document.getElementById("imagen-personaje");
+
+        let intervalo;
+
+        function girarRuleta() {
+            // Limpiar resultado, remover efectos previos y ocultar imagen
+            resultadoDiv.innerText = "";
+            imagenPersonaje.style.display = "none";
+            nombrePersonajeDiv.classList.remove("highlight");
+            clearInterval(intervalo);
+
+            let index = 0;
+            let velocidad = 50; // velocidad inicial de cambio de nombres (ajustada para mayor rapidez)
+
+            // Actualizar el nombre rápidamente
+            intervalo = setInterval(() => {
+                nombrePersonajeDiv.innerText = personajes[index].charAt(0).toUpperCase() + personajes[index].slice(1);
+                index = (index + 1) % personajes.length;
+            }, velocidad);
+
+            // Simular desaceleración y detenerse en un personaje aleatorio
+            let pasos = Math.floor(Math.random() * 10) + 15; // número de "pasos" reducido para un giro más corto
+
+            (function desacelerar() {
+                if (pasos > 0) {
+                    velocidad += 20; // desacelera rápidamente aumentando la velocidad de cambio
+                    clearInterval(intervalo);
+                    intervalo = setInterval(() => {
+                        nombrePersonajeDiv.innerText = personajes[index].charAt(0).toUpperCase() + personajes[index].slice(1);
+                        index = (index + 1) % personajes.length;
+                    }, velocidad);
+
+                    pasos--;
+                    setTimeout(desacelerar, velocidad); // llamada recursiva para la desaceleración
+                } else {
+                    clearInterval(intervalo);
+                    const personajeSeleccionado = personajes[(index - 1 + personajes.length) % personajes.length];
+                    resultadoDiv.innerText = `Personaje seleccionado: ${personajeSeleccionado.charAt(0).toUpperCase() + personajeSeleccionado.slice(1)}`;
+
+                    // Mostrar la imagen correspondiente del personaje
+                    imagenPersonaje.src = `imgs/${personajeSeleccionado}.png`;
+                    imagenPersonaje.style.display = "block";
+
+                    // Agregar efecto de rebote a la imagen y al nombre del personaje
+                    nombrePersonajeDiv.classList.add("highlight");
+                }
+            })();
+        }
+    </script>
+</body>
+</html>
