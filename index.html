@@ -222,7 +222,7 @@
                     const personajeSeleccionado = personajes[(index - 1 + personajes.length) % personajes.length];
                     resultadoDiv.innerText = `Personaje seleccionado: ${personajeSeleccionado}`;
 
-                    imagenPersonaje.src = `imgs/${personajeSeleccionado.toLowerCase()}.png`; // Cambia la ruta según el nombre del personaje
+                    imagenPersonaje.src = `imgs/${personajeSeleccionado.toLowerCase()}.png`; 
                     imagenPersonaje.style.display = "block"; // Mostrar imagen del personaje
                 }
             })();
