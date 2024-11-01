@@ -208,7 +208,8 @@
             girarBtn.disabled = false; 
         }
         function mostrarResultado(personaje) {
-            const imagenSrc = `imgs/${personaje}.webp`;
+            const imagenSrc = `imgs/${personaje.toLowerCase()}.webp`;
+            console.log(imagenSrc);
                 nombrePersonajeDiv.innerText = personaje;
                 imagenPersonaje.src = imagenSrc;
                 imagenPersonaje.style.display = "block"; 
